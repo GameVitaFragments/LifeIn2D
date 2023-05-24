@@ -1,10 +1,10 @@
 class Player extends Camera{
-	constructor(buffer) {
+	constructor(position, speed, buffer) {
 		super(buffer);
 		this.dimensions = createVector(1, 3, 1);
-		this.velocity = createVector(0, 0, 0);
+		this.speed = speed;
+		this.position = position;
 		this.sensitivity = 0.001;
-		this.speed = 1.0;
 	}
 
 	update() {

@@ -23,34 +23,34 @@ class Map {
         //console.log(this.corners);
     }
 
-    showMap(cam) {
+    showMap(cam, buffer) {
         let n = this.corners.length;
         for (let i = 0; i < n; i++) {
             let currCorner = this.corners[i];
             let prevCorner = this.corners[(((i-1)%n) + n)%n];
 
-            strokeWeight(5);
+            buffer.strokeWeight(5);
             //line(
             //    this.scale * currCorner[0] - width/4, 300, this.scale * currCorner[1] - height/4,
             //    this.scale * prevCorner[0] - width/4, 300, this.scale * prevCorner[1] - height/4
             //);
 
-            push();
-            strokeWeight(10);
-            ambientLight(10, 10, 10);
+            buffer.push();
+            buffer.strokeWeight(10);
+            buffer.ambientLight(10, 10, 10);
             // directionalLight(200, 200, 0, 1, 0, 0);
-            pointLight(100, 100, 100, cam.eyeX, cam.eyeY + 10, cam.eyeZ);
-            translate(
+            buffer.pointLight(100, 100, 100, cam.eyeX, cam.eyeY + 10, cam.eyeZ);
+            buffer.translate(
                 this.scale * (currCorner[0] + prevCorner[0])/2 - width/4,
                 0,
                 this.scale * (currCorner[1] + prevCorner[1])/2 - width/8
             );
             if (prevCorner[0] == currCorner[0]) {
-                box(this.wallWidth, this.wallHeight, (this.scale + this.wallWidth / 8) * Math.abs(prevCorner[1] - currCorner[1]));
+                buffer.box(this.wallWidth, this.wallHeight, (this.scale + this.wallWidth / 8) * Math.abs(prevCorner[1] - currCorner[1]));
             } else {
-                box((this.scale + this.wallWidth / 8)* Math.abs(prevCorner[0] - currCorner[0]), this.wallHeight, this.wallWidth);
+                buffer.box((this.scale + this.wallWidth / 8)* Math.abs(prevCorner[0] - currCorner[0]), this.wallHeight, this.wallWidth);
             }
-            pop();
+            buffer.pop();
 
             // console.log(currCorner, prevCorner);
             // line(

@@ -16,7 +16,7 @@ function drawScreen(shaderState) {
   rect(-width / 2, -height / 2, width, height);
   resetShader();
   pop();
-  fuzzyTex.clear();
+  renderBuffer.clear();
 }
 
 
