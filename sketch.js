@@ -10,18 +10,20 @@ function preload() {
 function setup() {
     canvas = createCanvas(windowWidth, windowHeight, WEBGL);
     renderBuffer = createGraphics(windowWidth, windowHeight, WEBGL);
-    player = new Player(createVector(-1000, -50, 50), 30.0, renderBuffer);
+    player = new Player(createVector(300, -50, 350), 30.0, renderBuffer);
     activeShader = 0.0;
     map1.load();
 }
 
 function draw() {
     //  renderBuffer.clear();
+    // frameRate(60);
     background(140, 184, 255);
     var t = millis() * 0.001;
-    player.update();
-    map1.showMap(player.cam,  renderBuffer);
+    map1.showMap(player.aabb,  renderBuffer);
+    player.update(map1);
     drawScreen(activeShader);
+    // console.log(frameRate());
 }
 
 function mouseClicked() {
