@@ -22,6 +22,7 @@ class Camera {
 		this.position.add(this.velocity);
 		let center = p5.Vector.add(this.position, this.forward);
 		this.cam.camera(this.position.x, this.position.y, this.position.z, center.x, center.y, center.z, this.up.x, this.up.y, this.up.z);
+		console.log(this.yaw,this.pitch);
 	}
 	moveX(speed) {
 		this.velocity.add(p5.Vector.mult(this.right, speed));

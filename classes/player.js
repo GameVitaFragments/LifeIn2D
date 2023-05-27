@@ -29,7 +29,7 @@ class Player extends Camera {
         let colliding = [];
         for (let i = 0; i < currMap.boundingBoxes.length; i++) {
             if (currentAABB.isColliding(currMap.boundingBoxes[i])) {
-                console.log(player.aabb.x, this.cam.eyeX);
+                //console.log(player.aabb.x, this.cam.eyeX);
                 colliding.push(currMap.boundingBoxes[i]);
             }
         }
