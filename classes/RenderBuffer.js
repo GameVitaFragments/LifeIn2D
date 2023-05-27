@@ -5,7 +5,7 @@ let renderShader;
 
 function drawScreen(shaderState) {
 
-  renderShader.setUniform('screenOverlay',screenBuffer); 
+  
   renderShader.setUniform('texture',renderBuffer);
   renderShader.setUniform('noise', getNoiseValue());
   renderShader.setUniform('time', frameCount * 0.01);
