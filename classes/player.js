@@ -6,7 +6,7 @@ class Player extends Camera {
         this.speed = speed;
         this.position = position;
         this.sensitivity = 0.001;
-        this.size = createVector(250, 100, 250);
+        this.size = createVector(250, 1000, 250);
         this.aabb = new AABB(this.position.x, this.position.y, this.position.z, this.size.x, this.size.y, this.size.z);
         this.isInteracting = false;
     }
@@ -32,8 +32,8 @@ class Player extends Camera {
         return -1;
     }
 
-    update(currMap) {
-        this.input(currMap);
+    update(currMap, entities) {
+        this.input();
         this.aabb.x = this.position.x;
         this.aabb.y = this.position.y;
         this.aabb.z = this.position.z;
@@ -56,6 +56,7 @@ class Player extends Camera {
 
         let colliding = [];
         let colnormal = [];
+        let colentities = [];
 
         for (let i = 0; i < currMap.boundingBoxes.length; i++) {
             if (currentAABB.isColliding(currMap.boundingBoxes[i])) {
@@ -63,12 +64,16 @@ class Player extends Camera {
                 colnormal.push(currMap.normals[i]);
             }
         }
+        for (let i = 0; i < entities.length; i++) {
+            if (currentAABB.isColliding(entities[i].aabb)) {
+                colentities.push(entities[i]);
+            }
+        }
 
         if (colliding.length > 0) {
             for (let i = 0; i < colliding.length; i++) {
                 let curr = colliding[i];
                 let currnormal = colnormal[i];
-                //console.log(currnormal);
                 if (this.velocity.mag() != 0) {
                     if(currnormal == -1) {
                         this.velocity.x = 0;
@@ -80,7 +85,23 @@ class Player extends Camera {
             }
         }
 
-        this.position.add(this.velocity);
+        if (colentities.length > 0) {
+            for (let i = 0; i < colentities.length; i++) {
+                let curr = colentities[i];
+                if (this.velocity.mag() != 0) {
+                    let dir = this.velocity.copy();
+                    dir.normalize();
+                    this.position.sub(dir);
+                } else {
+                    let dir = this.forward.copy();
+                    dir.normalize();
+                    this.position.sub(dir);
+                }
+            }
+        } else {
+            this.position.add(this.velocity);
+        }
+        
         let center = p5.Vector.add(this.position, this.aimforward);
         this.cam.camera(this.position.x, this.position.y, this.position.z, center.x, center.y, center.z, this.up.x, this.up.y, this.up.z);
     }
@@ -92,16 +113,16 @@ class Player extends Camera {
         this.pan(movedX * this.sensitivity);
         this.tilt(movedY * this.sensitivity);
         if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
-            this.moveX(this.speed, currMap);
+            this.moveX(this.speed);
         }
         if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) {
-            this.moveX(-this.speed, currMap)
+            this.moveX(-this.speed)
         }
         if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
-            this.moveZ(this.speed, currMap);
+            this.moveZ(this.speed);
         }
         if (keyIsDown(DOWN_ARROW) || keyIsDown(83)) {
-            this.moveZ(-this.speed, currMap);
+            this.moveZ(-this.speed);
         }
     }
 
