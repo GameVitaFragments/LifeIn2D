@@ -16,6 +16,7 @@ function mouseWheel(event)
 
 function InventoryInstanceProto()
 {
+
     //this is just a prototype testing suite
     let it = [];
     it[0] = new InvetoryItem(images["img1"],item_Type.Collectible);
@@ -23,6 +24,7 @@ function InventoryInstanceProto()
     it[2] = new InvetoryItem(images["img2"],item_Type.Collectible);
     it[3] = new InvetoryItem(images["img2"],item_Type.Collectible);
     p_Inventory = new Inventory(it);
+
 }
 
 class Inventory
@@ -46,7 +48,7 @@ class Inventory
             return;
         
         this.heldObjNo += roll; 
-        //console.log(this.heldObjNo);
+       // console.log(this.heldObjNo);
         if(this.heldObjNo > this.ItemList.length-1)
         {
             this.heldObjNo = 0;
@@ -92,7 +94,7 @@ class Inventory
             //createButton();
             Buffer.push();
             Buffer.fill(0,0,0,0);
-            //console.log(element.icon);
+           //console.log(element.icon);
             loadTexShader.setUniform('texture',element.icon);
             loadTexShader.setUniform('active',element.isHeld); 
             graphic.shader(loadTexShader);
