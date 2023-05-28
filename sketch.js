@@ -1,32 +1,50 @@
-let player;
+let player
 let map1;
+let mapTexture;
+
 let pointerLock = false;
-//let img;
+
+let table;
+let tabelTex;
+let ghost;
+let tex;
+
+let entities = [];
 
 function preload() {
-  renderShader = loadShader("Shaders/FuzzyVert.glsl", "Shaders/FuzzyFrag.glsl");
-  map1 = new Map("assets/maps/map1.csv");
-  ImageLoader.preloadUIShader();
+    renderShader = loadShader("Shaders/FuzzyVert.glsl", "Shaders/FuzzyFrag.glsl");
+    map1 = new Map("assets/maps/map1.csv");
+    table = new Model("./assets/models/coffee-table/source/table.obj", 200);
+    ghost = new Model("./assets/models/ghost.obj", 10);
+    tex = loadImage("./assets/texture/white.png");
+    ImageLoader.preloadUIShader();
 }
 
 function setup() {
+    canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+    renderBuffer = createGraphics(windowWidth, windowHeight, WEBGL);
+    player = new Player(createVector(300, 0, 350), 30.0, renderBuffer);
+    activeShader = 0.0;
+    map1.load(tex);
 
-  canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-  renderBuffer = createGraphics(windowWidth, windowHeight, WEBGL);
-  player = new Player(createVector(300, -50, 350), 30.0, renderBuffer);
-  activeShader = 0.0;
-  map1.load();
-  ImageLoader.setupUIbuffer();    
-  InventoryInstanceProto();
+    entities.push(table);
+    entities.push(ghost);
+
+    ImageLoader.setupUIbuffer();    
+    InventoryInstanceProto();
 }
 
 function draw() {
-  background(140, 184, 255);
-  var t = millis() * 0.001;
-  map1.showMap(player.aabb,  renderBuffer);
-  player.update(map1);
-  p_Inventory.displayItems(screenBuffer,player);
-  drawScreen(activeShader);
+    renderBuffer.background(140, 184, 255);
+    map1.showMap(player.aabb,  renderBuffer);
+
+    table.show(renderBuffer, createVector(2000, map1.wallHeight/2, 1100), tex);
+    ghost.show(renderBuffer, createVector(1500, map1.wallHeight/2, 4100), tex);
+
+    player.update(map1, entities);
+    p_Inventory.displayItems(screenBuffer,player);
+
+    drawScreen(activeShader);
 }
 
 function mouseClicked() {
@@ -38,4 +56,3 @@ function mouseClicked() {
     pointerLock = false;
   }
 }
-

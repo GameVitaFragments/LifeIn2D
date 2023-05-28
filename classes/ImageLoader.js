@@ -20,13 +20,13 @@ class ImageLoader
 
         
         //************** SETUP IMAGES TO LOAD *************
-        this._loadImage("img1","./assets/Sprites/download.jpg",screenBuffer);
-        this._loadImage("img2","./assets/Sprites/download.png",screenBuffer);
+        this._loadImage("img1","./assets/Sprites/download.jpg");
+        this._loadImage("img2","./assets/Sprites/download.png");
         
     }
 
-    static _loadImage(name,path,Buffer)
+    static _loadImage(name,path)
     {
-        images[name]=Buffer.loadImage(path);
+        images[name]=loadImage(path);
     }
 }
