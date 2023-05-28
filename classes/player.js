@@ -1,3 +1,5 @@
+let interactbutton = false;
+
 class Player extends Camera {
     constructor(position, speed, buffer) {
         super(buffer);
@@ -6,6 +8,28 @@ class Player extends Camera {
         this.sensitivity = 0.001;
         this.size = createVector(250, 100, 250);
         this.aabb = new AABB(this.position.x, this.position.y, this.position.z, this.size.x, this.size.y, this.size.z);
+        this.isInteracting = false;
+    }
+
+    interactionState(item) {
+        let distvec = p5.Vector.sub(item.pos, this.position);
+        let distance = p5.Vector.mag(distvec);        distvec.normalize();
+        let dotPro = p5.Vector.dot(this.aimforward, distvec);
+
+        if(this.isInteracting && interactbutton) {
+            this.isInteracting = false;
+            interactbutton = false;
+            return -1;
+        }
+        if(!this.isInteracting && dotPro >= 0.98 && distance <= item.minDist && interactbutton) {
+            this.isInteracting = true;
+            interactbutton = false;
+            return 1;
+        }
+        if(dotPro >= 0.98 && distance <= 600) {
+            return 0;
+        }
+        return -1;
     }
 
     update(currMap) {
@@ -14,11 +38,15 @@ class Player extends Camera {
         this.aabb.y = this.position.y;
         this.aabb.z = this.position.z;
         this.aabb.update();
-        this.forward = createVector(cos(this.yaw), tan(this.pitch), sin(this.yaw));
+        this.aimforward = createVector(cos(this.yaw), tan(this.pitch), sin(this.yaw));
+        this.forward = createVector(cos(this.yaw), 0, sin(this.yaw));
+        this.aimforward.normalize();
         this.forward.normalize();
+        this.aimright = createVector(cos(this.yaw - PI / 2.0), tan(this.pitch), sin(this.yaw - PI / 2.0));
         this.right = createVector(cos(this.yaw - PI / 2.0), 0, sin(this.yaw - PI / 2.0));
+        this.aimright.normalize();
+        this.right.normalize();
         this.velocity.mult(this.friction);
-        //this.position.x += this.velocity.x;
 
         let vel = this.velocity.copy();
         let pos = this.position.copy();
@@ -27,95 +55,40 @@ class Player extends Camera {
         currentAABB.update();
 
         let colliding = [];
+        let colnormal = [];
+
         for (let i = 0; i < currMap.boundingBoxes.length; i++) {
             if (currentAABB.isColliding(currMap.boundingBoxes[i])) {
-                console.log(player.aabb.x, this.cam.eyeX);
                 colliding.push(currMap.boundingBoxes[i]);
+                colnormal.push(currMap.normals[i]);
             }
         }
 
         if (colliding.length > 0) {
             for (let i = 0; i < colliding.length; i++) {
                 let curr = colliding[i];
-                // this.eyeX = curr.minX - this.size.x;
-                // this.position.x = this.velocity.x + curr.minX - this.size.x / 2;
+                let currnormal = colnormal[i];
+                //console.log(currnormal);
                 if (this.velocity.mag() != 0) {
-                    let dir = this.velocity.copy();
-                    dir.normalize();
-                    this.position.sub(dir);
-                } else {
-                    let dir = this.forward.copy();
-                    dir.normalize();
-                    this.position.sub(dir);
+                    if(currnormal == -1) {
+                        this.velocity.x = 0;
+                    }
+                    if(currnormal == 1) {
+                        this.velocity.z = 0;
+                    }
                 }
             }
-        } else {
-            this.position.add(this.velocity);
         }
-        // if (this.velocity.x > 0) {
-        // if (colliding.length > 0) {
-        //     for (let i = 0; i < colliding.length; i++) {
-        //         let curr = colliding[i];
-        //         // this.eyeX = curr.minX - this.size.x;
-        //         this.position.x = this.velocity.x + curr.minX - this.size.x / 2;
-        //     }
-        // } else {
-        //     this.position.x += this.velocity.x;
-        // }
-        // } else {
-        //     if (colliding.length > 0) {
-        //         for (let i = 0; i < colliding.length; i++) {
-        //             let curr = colliding[i];
-        //             // this.eyeX = curr.maxX + this.size.x;
-        //             this.position.x = this.velocity.x + curr.maxX + this.size.x / 2;
-        //         }
-        //     } else {
-        //         this.position.x += this.velocity.x;
-        //     }
-        // }
-        // this.position.z += this.velocity.z;
-        // pos.z += this.velocity.z;
 
-        // pos = createVector(this.cam.eyeX, this.cam.eyeY, this.cam.eyeZ);
-        // pos.z += this.velocity.z;
-        // let currentAABB = new AABB(pos.x,pos.y,pos.z,this.size.x,this.size.y,this.size.z);
-
-        // colliding = [];
-        // for (let i = 0; i < currMap.boundingBoxes.length; i++) {
-        //     if (player.aabb.isColliding(currMap.boundingBoxes[i])) {
-        //         colliding.push(currMap.boundingBoxes);
-        //     }
-        // }
-
-        // if (this.velocity.z > 0) {
-        //     if (colliding.length > 0) {
-        //         for (let i = 0; i < colliding.length; i++) {
-        //             let curr = colliding[i];
-        //             // this.eyeX = curr.minX - this.size.x;
-        //             this.position.z = this.velocity.z + curr.minZ - this.size.z / 2;
-        //         }
-        //     } else {
-        //         this.position.z += this.velocity.z;
-        //     }
-        // } else {
-        //     if (colliding.length > 0) {
-        //         for (let i = 0; i < colliding.length; i++) {
-        //             let curr = colliding[i];
-        //             // this.eyeX = curr.maxX + this.size.x;
-        //             this.position.z = this.velocity.z + curr.maxZ + this.size.z / 2;
-        //         }
-        //     } else {
-        //         this.position.z += this.velocity.z;
-        //     }
-        // }
-
-
-        // this.position.add(this.velocity);
-        let center = p5.Vector.add(this.position, this.forward);
+        this.position.add(this.velocity);
+        let center = p5.Vector.add(this.position, this.aimforward);
         this.cam.camera(this.position.x, this.position.y, this.position.z, center.x, center.y, center.z, this.up.x, this.up.y, this.up.z);
     }
 
     input(currMap) {
+        if(this.isInteracting) {
+            return;
+        }
         this.pan(movedX * this.sensitivity);
         this.tilt(movedY * this.sensitivity);
         if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
@@ -134,11 +107,19 @@ class Player extends Camera {
 
     moveX(speed) {
         this.velocity.add(p5.Vector.mult(this.right, speed));
-        this.velocity.y = 0;
     }
 
     moveZ(speed) {
         this.velocity.add(p5.Vector.mult(this.forward, speed));
-        this.velocity.y = 0;
     }
 }
+
+function keyPressed() {
+    if(keyCode == 70) {
+        interactbutton = true;
+    }
+    else {
+        interactbutton = false;
+    }
+}
+

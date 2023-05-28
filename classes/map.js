@@ -13,7 +13,8 @@ class Map {
         // console.log(this.map.getString(0, 0));
     }
 
-    load() {
+    load(tex) {
+        this.texture = tex;
         for (let r = 0; r < this.map.getRowCount(); r++) {
             let coord = [];
             coord[0] = parseInt(this.map.getString(r, 0));
@@ -48,6 +49,7 @@ class Map {
 
     showMap(playerAABB, buffer) {
         this.boundingBoxes = [];
+        this.normals = [];
         let n = this.corners.length;
         for (let i = 0; i < n; i++) {
             let currCorner = this.corners[i];
@@ -60,10 +62,10 @@ class Map {
             //);
 
             buffer.push();
-            buffer.strokeWeight(10);
-            buffer.ambientLight(10, 10, 10);
+            buffer.noStroke();
+            //buffer.ambientLight(10, 10, 10);
             // directionalLight(200, 200, 0, 1, 0, 0);
-            buffer.pointLight(100, 100, 100, playerAABB.x, playerAABB.y, playerAABB.z);
+            //buffer.pointLight(100, 100, 100, playerAABB.x, playerAABB.y, playerAABB.z);
             buffer.translate(
                 this.scale * (currCorner[0] + prevCorner[0])/2,
                 0,
@@ -73,16 +75,20 @@ class Map {
             let l;
             let w;
             let h;
+            buffer.texture(this.texture);
+            //console.log(prevCorner[0], currCorner[0]);
             if (prevCorner[0] == currCorner[0]) {
                 buffer.box(this.wallWidth, this.wallHeight, (this.scale + this.wallWidth / 8) * Math.abs(prevCorner[1] - currCorner[1]));
                 l = this.wallWidth;
                 w = this.wallHeight;
                 h = this.scale * Math.abs(prevCorner[1] - currCorner[1]);
+                this.normals.push(-1);
             } else {
                 buffer.box((this.scale + this.wallWidth / 8)* Math.abs(prevCorner[0] - currCorner[0]), this.wallHeight, this.wallWidth);
                 l = this.scale * Math.abs(prevCorner[0] - currCorner[0]);
                 w = this.wallHeight;
                 h = this.wallWidth;
+                this.normals.push(1);
             }
             this.boundingBoxes.push(
                 new AABB(
@@ -105,7 +111,7 @@ class Map {
         for (let i = 0; i < this.boundingBoxes.length; i++) {
             let curr = this.boundingBoxes[i];
             curr.update();
-            curr.show(buffer);
+            //curr.show(buffer);
             if (curr.isColliding(playerAABB)) {
                 //console.log(i);
             }

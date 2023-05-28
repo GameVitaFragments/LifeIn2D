@@ -8,6 +8,8 @@ class Camera {
 		this.up = createVector(0, 1, 0);
 		this.forward = createVector(0, 0, 1);
 		this.right = createVector(1, 0, 0);
+		this.aimforward = createVector(0, 0, 1)
+		this.aimright = createVector(1, 0, 0);
 		this.yaw = 0.0;
 		this.pitch = 0.0;
 		this.roll = 0.0;
@@ -15,12 +17,17 @@ class Camera {
 	}
 
 	update() {
-		this.forward = createVector(cos(this.yaw), tan(this.pitch), sin(this.yaw));
+		this.aimforward = createVector(cos(this.yaw), tan(this.pitch), sin(this.yaw));
+		this.forward = createVector(cos(this.yaw), 0, sin(this.yaw));
+		this.aimforward.normalize();
 		this.forward.normalize();
+		this.aimmright = createVector(cos(this.yaw - PI / 2.0), tan(this.pitch), sin(this.yaw - PI / 2.0));
 		this.right = createVector(cos(this.yaw - PI / 2.0), 0, sin(this.yaw - PI / 2.0));
+		this.aimright.normalize();
+		this.right.normalize();
 		this.velocity.mult(this.friction);
 		this.position.add(this.velocity);
-		let center = p5.Vector.add(this.position, this.forward);
+		let center = p5.Vector.add(this.position, this.aimforward);
 		this.cam.camera(this.position.x, this.position.y, this.position.z, center.x, center.y, center.z, this.up.x, this.up.y, this.up.z);
 	}
 	moveX(speed) {
