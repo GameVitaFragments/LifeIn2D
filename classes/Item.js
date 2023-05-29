@@ -9,6 +9,13 @@ function keyPressed()
 	{
   		EnterPressed = true;       
 	}
+    // console.log(keyCode);
+    if(keyCode == 70) {
+        interactbutton = true;
+    }
+    else {
+        interactbutton = false;
+    }
 }
 
 function keyReleased()
@@ -54,39 +61,49 @@ class InvetoryItem
 
 
 class Item {
-	constructor(model, type ,pos, minDist, Buffer, player) {
+	constructor(model,scale, type ,pos,texture, Buffer, player) {
 		this.pos = pos;
-		this.icon = icon;
+		this.model = model;
 		this.type = type;
 		this.collected = false;
-		this.minDist = minDist;
+		this.minDist = 900;
+		this.scale = scale;
+		this.tex = texture;
 		this.interState = -1;
 		this.buffer = Buffer;
 		this.Obj;
 		this.player = player;
+		this.Obj = new Model(this.model,this.scale);
 	}
 
+	setMinDist(dist)
+	{
+		this.minDist = dist;
+	}	
 	getObj() {
 		return this.Obj;
 	}
 
 	executeItem() {
 		//Item Logic
+		console.log("LOGIC !!");
 	}
 
 	update() {
+		let showTex = false;
+		//console.log(this.pos)
 		this.interState = this.player.interactionState(this);
+		// console.log(this.interState);
 		if(this.interState == 1) {
-			executeItem();
+			this.executeItem();
 		}
 		this.buffer.push();
-		transformX(pos.x);
-		transformY(pos.y);
 		this.buffer.noStroke();
 		if(this.interState == 0 || this.interState == 1) {
 			this.buffer.normalMaterial();
+			showTex = true;
 		}
-		this.Obj = buffer.box(100);
+		this.Obj.show(this.buffer,this.pos,this.tex,showTex);
 		this.buffer.pop();
 
 		//Unused Code//

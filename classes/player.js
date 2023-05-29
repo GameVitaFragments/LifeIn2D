@@ -13,20 +13,24 @@ class Player extends Camera {
 
     interactionState(item) {
         let distvec = p5.Vector.sub(item.pos, this.position);
-        let distance = p5.Vector.mag(distvec);        distvec.normalize();
+        let distance = p5.Vector.mag(distvec);       
+        distvec.normalize();
         let dotPro = p5.Vector.dot(this.aimforward, distvec);
-
+        // console.log(this.isInteracting);
+        //console.log();
         if(this.isInteracting && interactbutton) {
             this.isInteracting = false;
             interactbutton = false;
             return -1;
         }
-        if(!this.isInteracting && dotPro >= 0.98 && distance <= item.minDist && interactbutton) {
+        if(!this.isInteracting && dotPro >= 0.98 && distance <= 
+            item.minDist && interactbutton) {
             this.isInteracting = true;
             interactbutton = false;
+            console.log("Meow");
             return 1;
         }
-        if(dotPro >= 0.98 && distance <= 600) {
+        if(dotPro >= 0.98 && distance <= item.minDist) {
             return 0;
         }
         return -1;
@@ -135,12 +139,4 @@ class Player extends Camera {
     }
 }
 
-function keyPressed() {
-    if(keyCode == 70) {
-        interactbutton = true;
-    }
-    else {
-        interactbutton = false;
-    }
-}
 

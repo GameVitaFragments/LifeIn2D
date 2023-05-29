@@ -7,6 +7,7 @@ let canvas;
 
 let table;
 let tex;
+let crossHair;
 let ghost;
 
 let entities = [];
@@ -15,9 +16,9 @@ function preload() {
 		renderShader = loadShader("./Shaders/FuzzyVert.glsl", "./Shaders/FuzzyFrag.glsl");
 		map1 = new Map("./assets/maps/map1.csv");
 		ImageLoader.preloadUIShader();
-		table = new Model("./assets/models/coffee-table/source/table.obj", 200);
 		ghost = new Model("./assets/models/ghost.obj", 10);
 		tex = loadImage("./assets/texture/white.png");
+		crossHair = loadImage("./assets/texture/crosshair.png");
 		p_Dialogue = new Dialogue();
 		mainSound = new Sound("./assets/sounds/owsong.wav", 0, true);
 }
@@ -31,7 +32,18 @@ function setup() {
 
 		map1.load(tex);
 		mainSound.load();
-		entities.push(table);
+
+
+		table = new Item(
+		"./assets/models/coffee-table/source/table.obj", 
+		200,
+		item_Type.Interactible,
+		createVector(2000, map1.wallHeight/2, 1100),
+		tex,
+		renderBuffer,
+		player);
+
+		entities.push(table.Obj);
 		entities.push(ghost);
 
 		ImageLoader.setupUIbuffer();    
@@ -52,19 +64,21 @@ function draw() {
 
 		map1.showMap(player.aabb,  renderBuffer);
 
-		table.show(renderBuffer, createVector(2000, map1.wallHeight/2, 1100), tex);
+		table.update();
+		//table.show(renderBuffer, createVector(2000, map1.wallHeight/2, 1100), tex);
 		ghost.show(renderBuffer, createVector(1500, map1.wallHeight/2, 4100), tex);
 		
 		//Test Code//
 		
-		//intState = player.interactionState(createVector(400, 0, 500));
-		// let intState = 0;
+		// let intState = -1;
 		// renderBuffer.push();
 		// renderBuffer.noStroke();
-		// renderBuffer.translate(400, 0, 500);
+		// renderBuffer.translate(table.pos.x,-table.pos.y,table.pos.z);
 		// if(intState == 0) {
 		//   renderBuffer.normalMaterial();
 		// }
+		// intState = player.interactionState(table);
+		// console.log("New IntState",intState);
 		// renderBuffer.box(50);
 		// renderBuffer.pop();
 

@@ -5,15 +5,18 @@ class Model {
         this.aabb = new staticAABB(this.model.vertices, s);
     }
 
-    show(buffer, pos, texture) {
+    show(buffer, pos, texture,showTex) {
         this.aabb.update(this.model.vertices, pos);
         buffer.push();
         buffer.translate( pos.x, pos.y, pos.z );
         buffer.noStroke();
         buffer.scale(this.s);
         buffer.angleMode(DEGREES);
-        buffer.lights();
-        buffer.texture(texture);
+        if(!showTex)
+        {
+            buffer.lights();
+            buffer.texture(texture);
+        }
         buffer.model(this.model);
 
         buffer.noFill();
