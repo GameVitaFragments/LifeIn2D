@@ -16,7 +16,7 @@ class Player extends Camera {
         let distance = p5.Vector.mag(distvec);       
         distvec.normalize();
         let dotPro = p5.Vector.dot(this.aimforward, distvec);
-        // console.log(this.isInteracting);
+        //console.log(this.isInteracting);
         //console.log();
         if(this.isInteracting && interactbutton) {
             this.isInteracting = false;
@@ -27,7 +27,7 @@ class Player extends Camera {
             item.minDist && interactbutton) {
             this.isInteracting = true;
             interactbutton = false;
-            console.log("Meow");
+            // console.log("Meow");
             return 1;
         }
         if(dotPro >= 0.98 && distance <= item.minDist) {
@@ -69,8 +69,8 @@ class Player extends Camera {
             }
         }
         for (let i = 0; i < entities.length; i++) {
-            if (currentAABB.isColliding(entities[i].aabb)) {
-                colentities.push(entities[i]);
+            if (currentAABB.isColliding(entities[i].Obj.aabb)) {
+                colentities.push(entities[i].Obj);
             }
         }
 

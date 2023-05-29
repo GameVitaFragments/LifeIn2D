@@ -10,13 +10,17 @@ let tex;
 let crossHair;
 let ghost;
 
+
+let collctibles = [];
 let entities = [];
+let entitiesD1 = [];
+let entitiesD2 = [];
 
 function preload() {
 		renderShader = loadShader("./Shaders/FuzzyVert.glsl", "./Shaders/FuzzyFrag.glsl");
 		map1 = new Map("./assets/maps/map1.csv");
 		ImageLoader.preloadUIShader();
-		ghost = new Model("./assets/models/ghost.obj", 10);
+		// ghost = new Model("./assets/models/ghost.obj", 10);
 		tex = loadImage("./assets/texture/white.png");
 		crossHair = loadImage("./assets/texture/crosshair.png");
 		p_Dialogue = new Dialogue();
@@ -34,19 +38,37 @@ function setup() {
 		mainSound.load();
 
 
+		ImageLoader.setupUIbuffer();    
 		table = new Item(
 		"./assets/models/coffee-table/source/table.obj", 
 		200,
-		item_Type.Interactible,
+		item_Type.collctibles,
 		createVector(2000, map1.wallHeight/2, 1100),
 		tex,
 		renderBuffer,
-		player);
+		player,
+		images["img1"]);
 
-		entities.push(table.Obj);
-		entities.push(ghost);
+		ghost = new Ghost
+		(
+			"./assets/models/ghost.obj",
+			10,
+			item_Type.Interactible,
+			createVector(1500, map1.wallHeight/2, 4100),
+			tex,
+			renderBuffer,
+			player
+		);
+		ghostdials = [
+			"Hello World",
+			"Kill Ya"
+		];
+		ghost.setDialogue(
+			ghostdials
+		)
+		//entitiesD1.push(table);
+		entitiesD2.push(ghost);
 
-		ImageLoader.setupUIbuffer();    
 		InventoryInstanceProto();
 	
 		p_Dialogue.Init(renderBuffer);
@@ -58,15 +80,27 @@ function draw() {
 		flushBuffers();
 
 		renderBuffer.background(140, 184, 255);
-
-		//Check If Needed or Not
-		//var t = millis() * 0.001;
-
 		map1.showMap(player.aabb,  renderBuffer);
 
-		table.update();
+		if(activeShader == 0.0)
+		{
+			entities = entitiesD1;
+			// table.update();
+		}
+		else
+		{
+			entities = entitiesD2;	
+			//ghost.update();
+		}
+		
+		collctibles.forEach(element => {
+			element.update();
+		});
+		entities.forEach(element => {
+			element.update();
+		});
 		//table.show(renderBuffer, createVector(2000, map1.wallHeight/2, 1100), tex);
-		ghost.show(renderBuffer, createVector(1500, map1.wallHeight/2, 4100), tex);
+		//ghost.show(renderBuffer, createVector(1500, map1.wallHeight/2, 4100), tex);
 		
 		//Test Code//
 		
@@ -87,7 +121,7 @@ function draw() {
 		//I assume order matters so update the player after everybody
 		telepoter.update(renderBuffer);
 		p_Inventory.displayItems(screenBuffer,player);
-		p_Dialogue.Render(screenBuffer,0,255);
+		//p_Dialogue.Render(screenBuffer,0,255);
 		if(pointerLock) {
 			player.update(map1,entities);
 		}
