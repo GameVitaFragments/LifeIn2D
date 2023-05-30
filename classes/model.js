@@ -25,7 +25,7 @@ class Model {
         buffer.scale(1);
 
         buffer.pop();
-        this.aabb.show(buffer, pos);
+        //this.aabb.show(buffer, pos);
 
     }
 }

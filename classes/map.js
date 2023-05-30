@@ -3,12 +3,24 @@ function err(e) {
 }
 
 class Map {
-	constructor(path) {
+	constructor(path, i) {
 		this.map = loadTable(path, 'csv', err);
 		this.corners = [];
-		this.scale = 500;
+		this.scale = 350;
 		this.wallHeight = 800;
 		this.wallWidth  = 200;
+		this.teleport = [[36 * this.scale, 8 * this.scale]];
+		this.end = [[41, 3]];
+		this.spawn1 = [[2 * this.scale, 2 * this.scale]];
+		this.spawn2 = [[3.5 * this.scale, 3.5 * this.scale]];
+		this.type = i;
+		if (i == 1) {
+			this.npcPos = [
+				[4,61],
+				[24,85],
+				[84,11]
+			];
+		}
 	}
 
 	load(tex) {
@@ -19,7 +31,6 @@ class Map {
 			coord[1] = parseInt(this.map.getString(r, 1));
 			this.corners.push(coord);
 		}
-		let n = this.corners.length;
 	}
 
 	showMap(playerAABB, buffer) {
@@ -29,9 +40,12 @@ class Map {
 		for (let i = 0; i < n; i++) {
 			let currCorner = this.corners[i];
 			let prevCorner = this.corners[(((i-1)%n) + n)%n];
-
+			let col = random(-25, 25);
+			let noiseVal = noise((millis()/20)*0.02, millis()/20*0.02)*25;
 			buffer.strokeWeight(5);
 			buffer.push();
+			buffer.ambientLight(0);
+			buffer.directionalLight(noiseVal + 200,noiseVal+ 200,noiseVal + 200, player.forward.x, player.forward.y, player.forward.z);
 			buffer.noStroke();
 			buffer.translate(
 				this.scale * (currCorner[0] + prevCorner[0])/2,
@@ -43,7 +57,6 @@ class Map {
 			let w;
 			let h;
 
-			buffer.lights();
 			buffer.texture(this.texture);
 
 			if (prevCorner[0] == currCorner[0]) {
@@ -60,6 +73,10 @@ class Map {
 				this.normals.push(1);
 			}
 
+
+
+
+
 			this.boundingBoxes.push(
 				new AABB(
 					this.scale * (currCorner[0] + prevCorner[0])/2,
@@ -71,11 +88,51 @@ class Map {
 				)
 			);
 
-			buffer.rotateX(millis()/100);
-			buffer.plane(30);
-
 			buffer.pop();
 
+		}
+		if (this.type == 2) {
+			renderBuffer.push();
+			renderBuffer.translate(
+				3.5 * this.scale,
+				0,
+				0
+			)
+			renderBuffer.texture(avatarImages[3]);
+			renderBuffer.box(500);
+			renderBuffer.pop();
+
+			renderBuffer.push();
+			renderBuffer.translate(
+				7 * this.scale,
+				0,
+				3.5 * this.scale
+			)
+			renderBuffer.texture(avatarImages[0]);
+			renderBuffer.box(500);
+			renderBuffer.pop();
+
+			renderBuffer.push();
+			renderBuffer.translate(
+				3.5 * this.scale,
+				0,
+				7 * this.scale
+			)
+			renderBuffer.texture(avatarImages[1]);
+			renderBuffer.angleMode(DEGREES);
+			renderBuffer.rotateZ(90);
+			renderBuffer.box(500);
+			renderBuffer.pop();
+
+			renderBuffer.push();
+			renderBuffer.translate(
+				0,
+				0,
+				3.5 * this.scale
+			)
+			renderBuffer.texture(avatarImages[2]);
+			renderBuffer.box(500);
+			renderBuffer.pop();
 		}
 		for (let i = 0; i < this.boundingBoxes.length; i++) {
 			let curr = this.boundingBoxes[i];

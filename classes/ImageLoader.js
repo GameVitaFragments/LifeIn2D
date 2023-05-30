@@ -22,7 +22,8 @@ class ImageLoader
         //************** SETUP IMAGES TO LOAD *************
         this._loadImage("img1","./assets/Sprites/download.jpg");
         this._loadImage("img2","./assets/Sprites/download.png");
-        
+        this._loadImage("compass","./assets/texture/compass.png");
+
     }
 
     static _loadImage(name,path)

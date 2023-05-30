@@ -12,7 +12,7 @@ class Dialogue
         this.timeSince = 0;
     }
 
-    Init(Buffer,size = 18)
+    Init(Buffer,size = 32)
     {
         this._texSize = size;
     }

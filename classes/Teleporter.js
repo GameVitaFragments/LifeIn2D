@@ -8,11 +8,14 @@ class Teleporter
         this.pos = position;
         this._teleport = false;
         this.change = true;
-        this.model = loadModel('assets/Models/Teleporter.obj');
+        this.model = loadModel('assets/models/Teleporter.obj');
         this.down = false;
         this.offsetY = 0;
         this.maxOffset = 300;
         this.pillarCol = createVector(0,0,0);
+
+        this.playerIn = false;
+        this.currentWorld = 1;
     }
 
 
@@ -35,9 +38,11 @@ class Teleporter
         if((posVec.sub(plVec)).mag()<400)
         {
             this._teleport = true;
+            this.playerIn = true;
         }
         else
         {
+            this.playerIn = false;
             this._teleport = false;
             this.change = true;
             this.down = false;
@@ -79,16 +84,47 @@ class Teleporter
                 this.pillarCol = createVector(0,0,0); 
                 Dialogue.setTimeSince();
                 activeShader = 0.0;
+                this.currentWorld = 2;
             }
             else
             {
                 this.pillarCol = createVector(255,255,255);
                 Dialogue.setTimeSince();
                 activeShader = 1.0;
+                this.currentWorld = 1;
             }
+            this.onTeleport();
             this.change = false;
         }
 
+    }
+
+    onTeleport()
+    {
+
+        if(curmap === map1)
+        {
+            if(p_Inventory.heldObj == null)
+            {
+
+            }
+            else {
+                if(p_Inventory.heldObj.icon === images["compass"] && activeShader === 1.0)
+                {
+                    curmap = map2;
+                    player.position = createVector(curmap.spawn2[0][0],-50,curmap.spawn2[0][1]);
+                    this.pos = createVector(curmap.spawn2[0][0],-player.position.y-600,curmap.spawn2[0][1]);
+                    player.yaw = 0;
+                    player.pitch = 0;
+                }
+            }
+        }
+        else
+        {
+            curmap = map1;
+            player.position = createVector(curmap.teleport[0][0],-50,curmap.teleport[0][1]);
+            this.pos = createVector(curmap.teleport[0][0],-player.position.y-600,curmap.teleport[0][1]);
+        }
     }
 }
 

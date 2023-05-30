@@ -105,6 +105,16 @@ class Player extends Camera {
         } else {
             this.position.add(this.velocity);
         }
+
+        renderBuffer.push();
+        renderBuffer.translate(this.position.x, map1.wallHeight/1.8, this.position.z);
+        renderBuffer.angleMode(RADIANS);
+        renderBuffer.noStroke();
+        renderBuffer.fill(150);
+        renderBuffer.rotateX(PI/2);
+        renderBuffer.plane(25000, 25000);
+
+        renderBuffer.pop();
         
         let center = p5.Vector.add(this.position, this.aimforward);
         this.cam.camera(this.position.x, this.position.y, this.position.z, center.x, center.y, center.z, this.up.x, this.up.y, this.up.z);

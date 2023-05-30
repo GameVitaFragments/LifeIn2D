@@ -56,21 +56,32 @@ class InvetoryItem
 
 	Destroy()
 	{
-	  p_Inventory.removeItem(this);
+	  //p_Inventory.removeItem(this);
+	}
+}
+
+class BlackBox extends InvetoryItem
+{
+	Use()
+	{
+		gameState = 1;
 	}
 }
 
 
 class Item {
-	constructor(model,scale, type ,pos,texture, Buffer, player,icon = null) {
+	constructor(model,scale, type ,pos,texture, Buffer, player,icon = null,dim = 1) {
 		this.pos = pos;
 		this.model = model;
 		this.type = type;
 		this.collected = false;
 		this.minDist = 2000;
 		this.icon = icon;
-		if(type == item_Type.collctibles)
-			collctibles.push(this);
+		this.dim = dim;
+		if(type == item_Type.collctibles && dim == 1)
+			collctiblesD1.push(this);
+		else if(type == item_Type.collctibles && dim == 2)
+			collctiblesD2.push(this);
 		console.log(this.id);
 		this.scale = scale;
 		this.tex = texture;
@@ -115,7 +126,9 @@ class Item {
                 //console.log(this.ItemList);
             }
         });
+
 		let it = new InvetoryItem(this.icon);
+
 		p_Inventory.addItem(it);
 		interactbutton = false;
 		this.player.isInteracting = false;
@@ -125,7 +138,7 @@ class Item {
 		let showTex = false;
 		//console.log(this.pos)
 		this.interState = this.player.interactionState(this);
-		 console.log(this.interState);
+		// console.log(this.interState);
 
        // console.log("Hello World");
 		if(this.player.isInteracting && (this.interState==0 || this.interState ==1)) {	
@@ -148,7 +161,9 @@ class Item {
 		{
 			Dialogue.setTimeSince();
 		}
+
 		this.Obj.show(this.buffer,this.pos,this.tex,showTex);
+
 		this.buffer.pop();
 
 		//Unused Code//
